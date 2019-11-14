@@ -1,6 +1,9 @@
 import React from 'react';
+import AuthContext from '../context/auth.context';
 
 class LoginPage extends React.Component {
+	static contextType = AuthContext;
+
 	constructor(props) {
 		super(props);
 
@@ -41,7 +44,11 @@ class LoginPage extends React.Component {
 
 			return res.json();
 		}).then(user => {
-			console.log(user);
+			this.context.login(
+				user.data.login.userId,
+				user.data.login.token,
+				user.data.login.tokenExpiration
+			);
 		}).catch(err => {
 			console.log(err);
 		});
