@@ -2,10 +2,11 @@ import React from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 
 import './App.css';
-import LoginPage from './pages/login.page';
+import LoginPage from './pages/auth/login.page';
+import RegisterPage from './pages/auth/register.page';
 import Navbar from './components/navbar.component';
-import RegisterPage from './pages/register.page';
 import AuthContext from './context/auth.context';
+import TaskListPage from './pages/task/list.page';
 
 class App extends React.Component {
 	state = {
@@ -32,7 +33,8 @@ class App extends React.Component {
 					<Navbar />
 
 					<Switch>
-						<Redirect from="/" to="/login" exact />
+						<Redirect from="/" to="/task" exact />
+						<Route path="/task" component={ TaskListPage } />
 						<Route path="/login" component={ LoginPage } />
 						<Route path="/register" component={ RegisterPage } />
 					</Switch>
