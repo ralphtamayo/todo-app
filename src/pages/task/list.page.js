@@ -40,41 +40,6 @@ class TaskListPage extends React.Component {
 		this.toggleModal();
 	}
 
-	edit = (task) => {
-		this.setState({ task: task });
-
-		this.toggleModal();
-	}
-
-	delete = async (task) => {
-		let requestBody = `
-			deleteTask (taskId: "${ task._id }") {
-				title
-			}`
-		;
-
-
-		await api.mutation(requestBody, response => {
-			if (response.status === 200) {
-				this.fetchTasks();
-			}
-		});
-	}
-
-	toggleCompletion = async (task) => {
-		let requestBody = `
-			toggleTaskCompletion (taskId: "${ task._id }") {
-				title
-			}`
-		;
-
-		await api.mutation(requestBody, response => {
-			if (response.status === 200) {
-				this.fetchTasks();
-			}
-		});
-	}
-
 	renderModal() {
 		return (
 			<Modal show={ this.state.showModal } onHide={ this.toggleModal }>
@@ -84,44 +49,32 @@ class TaskListPage extends React.Component {
 				<Modal.Body>
 					<TaskForm task={ this.state.task } fetchTasks={ this.fetchTasks.bind(this) } toggleModal={ this.toggleModal } />
 				</Modal.Body>
-				<Modal.Footer>
-					<Button variant="secondary" onClick={ this.toggleModal }>
-						Close
-					</Button>
-				</Modal.Footer>
 			</Modal>
 		);
 	}
 
 	render() {
-		const taskList = this.state.tasks.map((task) =>
-			<li key={ task._id }>
-				<Button variant="primary" onClick={ () => this.toggleCompletion(task) }>
-					{ task.isDone ? "Unfinish" : "Finish"}
-				</Button>
-				{ task.title }
-				<NavLink to={`/task/${ task._id }`}>
-					<Button variant="primary">
-						View
-					</Button>
-				</NavLink>
-				<Button variant="primary" onClick={ () => this.edit(task) }>
-					Edit
-				</Button>
-				<Button variant="danger" onClick={ () => this.delete(task) }>
-					Delete
-				</Button>
-			</li>
+		let taskList = this.state.tasks.map((task) =>
+			<NavLink to={`/task/${ task._id }`} key={ task._id } className="list-group-item list-group-item-action">
+				<div className="d-flex w-100 justify-content-between">
+					<h5 className="d-inline-block text-truncate mw-100 mb-1">
+						{ task.title }
+						{task.isDone &&
+							<i className="fa fa-check text-success ml-2"></i>
+						}
+					</h5>
+				</div>
+				<small className="d-inline-block text-truncate mw-100">{ task.description }</small>
+			</NavLink>
 		);
 
 		return (
 			<div>
-				<h1>Task listing page</h1>
-				<Button variant="primary" onClick={ this.create }>
-					Create task
-				</Button>
+				<button type="button" className="btn btn-primary btn-sm float-right" onClick={ this.create }>Create task</button>
+				<h5 className="card-title">Tasks</h5>
+				<hr/>
 
-				<ul>{ taskList }</ul>
+				<ul className="list-group">{ taskList }</ul>
 
 				{this.renderModal()}
 			</div>

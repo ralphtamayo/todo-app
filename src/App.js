@@ -30,16 +30,25 @@ class App extends React.Component {
 		return (
 			<BrowserRouter>
 				<AuthContext.Provider value={ contextVal }>
-					<h1>React works!</h1>
-					<Navbar />
-
-					<Switch>
-						<Redirect from="/" to="/task" exact />
-						<Route path="/task/:id" component={ TaskShowPage } />
-						<Route path="/task" component={ TaskListPage } />
-						<Route path="/login" component={ LoginPage } />
-						<Route path="/register" component={ RegisterPage } />
-					</Switch>
+					{/* <h1>React works!</h1>
+					<Navbar /> */}
+					<div className="container-fluid">
+						<div className="row">
+							<div className="col-12 col-md-8 col-lg-4 mx-auto">
+								<div className="card mt-3 mt-md-5">
+									<div className="card-body">
+										<Switch>
+											<Redirect from="/" to="/task" exact />
+											<Route path="/task/:id" component={ TaskShowPage } />
+											<Route path="/task" component={ TaskListPage } />
+											<Route path="/login" component={ LoginPage } />
+											<Route path="/register" component={ RegisterPage } />
+										</Switch>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</AuthContext.Provider>
 			</BrowserRouter>
 		);
