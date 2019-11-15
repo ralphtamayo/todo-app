@@ -1,7 +1,10 @@
 import React from 'react';
 import axios from 'axios';
+import AuthContext from '../context/auth.context';
 
 class TaskForm extends React.Component {
+	static contextType = AuthContext;
+
 	constructor(props) {
 		super(props);
 
@@ -69,7 +72,8 @@ class TaskForm extends React.Component {
 		}
 
 		await axios.post('http://localhost:4200/', requestBody, { headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			Authorization: 'Bearer ' + this.context.token
 		}}).then((response) => {
 			this.props.toggleModal();
 			this.props.fetchTasks();
