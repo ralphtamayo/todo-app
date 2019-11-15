@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
+import axios from 'axios';
 
 class TaskShowPage extends React.Component {
 	state = {
@@ -11,34 +12,24 @@ class TaskShowPage extends React.Component {
 		this.getTask(this.props.match.params.id);
 	}
 
-	getTask = (taskId) => {
-		fetch('http://localhost:4200/', {
-			method: 'POST',
-			body: JSON.stringify({
-				query: `
-					query {
-						task (taskId: "${ taskId }") {
-							title
-							description
-							createdAt
-						}
+	getTask = async (taskId) => {
+		let requestBody = {
+			query: `
+				query {
+					task (taskId: "${ taskId }") {
+						title
+						description
+						createdAt
 					}
-				`
-			}),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		}).then(res => {
-			if (res.status !== 200 && res.status !== 201) {
-				throw new Error('Failed!');
-			}
+				}
+			`
+		}
 
-			return res.json();
-		}).then(res => {
-			this.setState({ task: res.data.task });
-		}).catch(err => {
-			console.log(err);
-		});
+		let response = await axios.post('http://localhost:4200/', requestBody, { headers: {
+			'Content-Type': 'application/json'
+		}});
+
+		this.setState({ task: response.data.data.task });
 	}
 
 	render() {

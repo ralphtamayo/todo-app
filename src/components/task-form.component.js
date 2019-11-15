@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 class TaskForm extends React.Component {
 	constructor(props) {
@@ -36,14 +37,14 @@ class TaskForm extends React.Component {
 		this.setState({ form: updatedForm });
 	}
 
-	submitForm = (e) => {
+	submitForm = async (e) => {
 		e.preventDefault();
 
 		let id = this.state.form.id;
 		let title = this.state.form.title;
 		let description = this.state.form.description;
 
-		let queryBody = {
+		let requestBody = {
 			query: `
 				mutation {
 					updateTask(taskId: "${ id }", taskInput: { title: "${ title }", description: "${ description }" }) {
@@ -55,7 +56,7 @@ class TaskForm extends React.Component {
 		}
 
 		if (this.state.isNew) {
-			queryBody = {
+			requestBody = {
 				query: `
 					mutation {
 						createTask(taskInput: { title: "${ title }", description: "${ description }" }) {
@@ -67,28 +68,12 @@ class TaskForm extends React.Component {
 			}
 		}
 
-		fetch('http://localhost:4200/', {
-			method: 'POST',
-			body: JSON.stringify(queryBody),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		}).then(res => {
-			if (res.status !== 200 && res.status !== 201) {
-				throw new Error('Error!');
-			}
-
-			return res.json();
-		}).then(user => {
-			this.closeModal();
-		}).catch(err => {
-			console.log(err);
+		await axios.post('http://localhost:4200/', requestBody, { headers: {
+			'Content-Type': 'application/json'
+		}}).then((response) => {
+			this.props.toggleModal();
 		});
 	};
-
-	closeModal = () => {
-		this.props.toggleModal();
-	}
 
 	render() {
 		return (
@@ -101,10 +86,6 @@ class TaskForm extends React.Component {
 					<label>Description</label>
 					<input type="text" name='description' placeholder="description" value={ this.state.form.description } onChange={ this.handleInputChange } />
 				</div>
-				{/* <div>
-					<label>Password</label>
-					<input type="password" id="password" placeholder="password" ref={ this.password } />
-				</div> */}
 				<input type="submit"/>
 			</form>
 		);
