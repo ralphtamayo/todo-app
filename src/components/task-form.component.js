@@ -65,22 +65,32 @@ class TaskForm extends React.Component {
 
 		await api.mutation(requestBody, (response) => {
 			this.props.toggleModal();
-			this.props.fetchTasks();
+
+			if (this.props.fetchTasks != null) {
+				this.props.fetchTasks();
+			}
+
+			if (this.props.getTask != null) {
+				this.props.getTask(this.props.task._id);
+			}
 		});
 	};
 
 	render() {
 		return (
 			<form onSubmit={ this.submitForm }>
-				<div>
+				<div className="form-group">
 					<label>Title</label>
-					<input type="text" name='title' placeholder="title" value={ this.state.form.title } onChange={ this.handleInputChange } />
+					<input type="text" className="form-control" name='title' placeholder="Title" value={ this.state.form.title } onChange={ this.handleInputChange } />
 				</div>
-				<div>
+				<div className="form-group">
 					<label>Description</label>
-					<input type="text" name='description' placeholder="description" value={ this.state.form.description } onChange={ this.handleInputChange } />
+					<textarea className="form-control" name='description' placeholder="description" value={ this.state.form.description } onChange={ this.handleInputChange }></textarea>
 				</div>
-				<input type="submit"/>
+				<div className="float-right">
+					<button type="submit" className="btn btn-primary mr-2">Submit</button>
+					<button type="button" className="btn btn-secondary" onClick={ this.props.toggleModal }>Close</button>
+				</div>
 			</form>
 		);
 	}
