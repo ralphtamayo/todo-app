@@ -21,6 +21,8 @@ class TaskListPage extends React.Component {
 				_id
 				title
 				description
+				isDone
+				finishedAt
 				createdAt
 			}`
 		;
@@ -59,6 +61,20 @@ class TaskListPage extends React.Component {
 		});
 	}
 
+	toggleCompletion = async (task) => {
+		let requestBody = `
+			toggleTaskCompletion (taskId: "${ task._id }") {
+				title
+			}`
+		;
+
+		await api.mutation(requestBody, response => {
+			if (response.status === 200) {
+				this.fetchTasks();
+			}
+		});
+	}
+
 	renderModal() {
 		return (
 			<Modal show={ this.state.showModal } onHide={ this.toggleModal }>
@@ -80,6 +96,9 @@ class TaskListPage extends React.Component {
 	render() {
 		const taskList = this.state.tasks.map((task) =>
 			<li key={ task._id }>
+				<Button variant="primary" onClick={ () => this.toggleCompletion(task) }>
+					{ task.isDone ? "Unfinish" : "Finish"}
+				</Button>
 				{ task.title }
 				<NavLink to={`/task/${ task._id }`}>
 					<Button variant="primary">
