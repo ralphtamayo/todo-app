@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import AuthContext from '../context/auth.context';
+import api from '../services/web-api.service';
 
 class TaskForm extends React.Component {
 	static contextType = AuthContext;
@@ -47,34 +48,23 @@ class TaskForm extends React.Component {
 		let title = this.state.form.title;
 		let description = this.state.form.description;
 
-		let requestBody = {
-			query: `
-				mutation {
-					updateTask(taskId: "${ id }", taskInput: { title: "${ title }", description: "${ description }" }) {
-						_id
-						title
-					}
-				}
-			`
-		}
+		let requestBody = `
+			updateTask(taskId: "${ id }", taskInput: { title: "${ title }", description: "${ description }" }) {
+				_id
+				title
+			}`
+		;
 
 		if (this.state.isNew) {
-			requestBody = {
-				query: `
-					mutation {
-						createTask(taskInput: { title: "${ title }", description: "${ description }" }) {
-							_id
-							title
-						}
-					}
-				`
-			}
+			requestBody = `
+				createTask(taskInput: { title: "${ title }", description: "${ description }" }) {
+					_id
+					title
+				}`
+			;
 		}
 
-		await axios.post('http://localhost:4200/', requestBody, { headers: {
-			'Content-Type': 'application/json',
-			Authorization: 'Bearer ' + this.context.token
-		}}).then((response) => {
+		await api.mutation(requestBody, (response) => {
 			this.props.toggleModal();
 			this.props.fetchTasks();
 		});
