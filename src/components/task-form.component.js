@@ -72,6 +72,7 @@ class TaskForm extends React.Component {
 			'Content-Type': 'application/json'
 		}}).then((response) => {
 			this.props.toggleModal();
+			this.props.fetchTasks();
 		});
 	};
 

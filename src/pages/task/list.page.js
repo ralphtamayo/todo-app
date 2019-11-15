@@ -74,7 +74,7 @@ class TaskListPage extends React.Component {
 					<Modal.Title>Create a new task</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<TaskForm task={ this.state.task } fetchTasks={ this.fetchTasks() } toggleModal={ this.toggleModal } />
+					<TaskForm task={ this.state.task } fetchTasks={ this.fetchTasks.bind(this) } toggleModal={ this.toggleModal } />
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="secondary" onClick={ this.toggleModal }>
