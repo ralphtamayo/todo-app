@@ -3,6 +3,7 @@ import { Button, Modal } from 'react-bootstrap';
 import TaskForm from '../../components/task-form.component';
 import { NavLink } from 'react-router-dom';
 import axios from 'axios';
+import api from '../../services/web-api.service';
 
 class TaskListPage extends React.Component {
 	state = {
@@ -16,20 +17,16 @@ class TaskListPage extends React.Component {
 	}
 
 	async fetchTasks() {
-		let response = await axios.post('http://localhost:4200/', {
-			query: `
-				query {
-					tasks {
-						_id
-						title
-						description
-						createdAt
-					}
-				}
-			`
-		}, { headers: {
-			'Content-Type': 'application/json'
-		}});
+		let requestBody = `
+			tasks {
+				_id
+				title
+				description
+				createdAt
+			}`
+		;
+
+		let response = await api.query(requestBody);
 
 		this.setState({ tasks: response.data.data.tasks });
 	}

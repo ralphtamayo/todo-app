@@ -1,6 +1,6 @@
 import React from 'react';
 import AuthContext from '../../context/auth.context';
-import axios from 'axios';
+import api from '../../services/web-api.service';
 
 class LoginPage extends React.Component {
 	static contextType = AuthContext;
@@ -22,27 +22,21 @@ class LoginPage extends React.Component {
 			return;
 		}
 
-		let requestBody = {
-			query: `
-				query {
-					login(email: "${ email }", password: "${ password }") {
-						userId
-						token
-						tokenExpiration
-					}
-				}
-			`
-		}
+		let requestBody = `
+			login(email: "${ email }", password: "${ password }") {
+				userId
+				token
+				tokenExpiration
+			}`
+		;
 
-		await axios.post('http://localhost:4200/', requestBody, { headers: {
-			'Content-Type': 'application/json'
-		}}).then((response) => {
+		await api.query(requestBody, (response) => {
 			this.context.login(
 				response.data.data.login.userId,
 				response.data.data.login.token,
 				response.data.data.login.tokenExpiration
 			);
-		});
+		})
 	};
 
 	render() {

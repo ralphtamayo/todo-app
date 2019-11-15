@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../../services/web-api.service';
 
 class TaskShowPage extends React.Component {
 	state = {
@@ -13,21 +13,15 @@ class TaskShowPage extends React.Component {
 	}
 
 	getTask = async (taskId) => {
-		let requestBody = {
-			query: `
-				query {
-					task (taskId: "${ taskId }") {
-						title
-						description
-						createdAt
-					}
-				}
-			`
-		}
+		let requestBody = `
+			task (taskId: "${ taskId }") {
+				title
+				description
+				createdAt
+			}`
+		;
 
-		let response = await axios.post('http://localhost:4200/', requestBody, { headers: {
-			'Content-Type': 'application/json'
-		}});
+		let response = await api.query(requestBody);
 
 		this.setState({ task: response.data.data.task });
 	}
