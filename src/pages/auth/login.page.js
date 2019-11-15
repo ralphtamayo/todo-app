@@ -1,5 +1,6 @@
 import React from 'react';
-import AuthContext from '../context/auth.context';
+import AuthContext from '../../context/auth.context';
+import api from '../../services/web-api.service';
 
 class LoginPage extends React.Component {
 	static contextType = AuthContext;
@@ -11,7 +12,7 @@ class LoginPage extends React.Component {
 		this.password = React.createRef();
 	}
 
-	login = (e) => {
+	login = async (e) => {
 		e.preventDefault();
 
 		let email = this.email.current.value;
@@ -21,37 +22,21 @@ class LoginPage extends React.Component {
 			return;
 		}
 
-		fetch('http://localhost:4200/', {
-			method: 'POST',
-			body: JSON.stringify({
-				query: `
-					query {
-						login(email: "${ email }", password: "${ password }") {
-							userId
-							token
-							tokenExpiration
-						}
-					}
-				`
-			}),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		}).then(res => {
-			if (res.status !== 200 && res.status !== 201) {
-				throw new Error('Registration failed');
-			}
+		let requestBody = `
+			login(email: "${ email }", password: "${ password }") {
+				userId
+				token
+				tokenExpiration
+			}`
+		;
 
-			return res.json();
-		}).then(user => {
+		await api.query(requestBody, (response) => {
 			this.context.login(
-				user.data.login.userId,
-				user.data.login.token,
-				user.data.login.tokenExpiration
+				response.data.data.login.userId,
+				response.data.data.login.token,
+				response.data.data.login.tokenExpiration
 			);
-		}).catch(err => {
-			console.log(err);
-		});
+		})
 	};
 
 	render() {

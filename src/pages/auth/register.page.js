@@ -1,4 +1,5 @@
 import React from 'react';
+import api from '../../services/web-api.service';
 
 class RegisterPage extends React.Component {
 	constructor(props) {
@@ -8,7 +9,7 @@ class RegisterPage extends React.Component {
 		this.password = React.createRef();
 	}
 
-	register = (e) => {
+	register = async (e) => {
 		e.preventDefault();
 
 		let email = this.email.current.value;
@@ -18,32 +19,14 @@ class RegisterPage extends React.Component {
 			return;
 		}
 
-		fetch('http://localhost:4200/', {
-			method: 'POST',
-			body: JSON.stringify({
-				query: `
-					mutation {
-						createUser(userInput: { email: "${ email }", password: "${ password }" }) {
-							_id
-							email
-						}
-					}
-				`
-			}),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		}).then(res => {
-			if (res.status !== 200 && res.status !== 201) {
-				throw new Error('Registration failed');
-			}
+		let requestBody = `
+			createUser(userInput: { email: "${ email }", password: "${ password }" }) {
+				_id
+				email
+			}`
+		;
 
-			return res.json();
-		}).then(user => {
-			console.log(user);
-		}).catch(err => {
-			console.log(err);
-		});
+		await api.mutation(requestBody);
 	};
 
 	render() {
