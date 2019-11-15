@@ -8,8 +8,8 @@ class TaskForm extends React.Component {
 			isNew: true,
 			form: {
 				id: null,
-				title: null,
-				description: null,
+				title: "",
+				description: "",
 			}
 		}
 
@@ -80,11 +80,15 @@ class TaskForm extends React.Component {
 
 			return res.json();
 		}).then(user => {
-			console.log(user);
+			this.closeModal();
 		}).catch(err => {
 			console.log(err);
 		});
 	};
+
+	closeModal = () => {
+		this.props.toggleModal();
+	}
 
 	render() {
 		return (

@@ -2,62 +2,36 @@ import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import TaskForm from '../../components/task-form.component';
 import { NavLink } from 'react-router-dom';
+import axios from 'axios';
 
 class TaskListPage extends React.Component {
 	state = {
 		task: null,
 		tasks: [],
-		isLoading: false,
 		showModal: false,
 	};
-
-	isActive = true;
 
 	componentDidMount() {
 		this.fetchTasks();
 	}
 
-	fetchTasks() {
-		this.setState({ isLoading: true });
-
-		fetch('http://localhost:4200/', {
-			method: 'POST',
-			body: JSON.stringify({
-				query: `
-					query {
-						tasks {
-							_id
-							title
-							description
-							createdAt
-						}
+	async fetchTasks() {
+		let response = await axios.post('http://localhost:4200/', {
+			query: `
+				query {
+					tasks {
+						_id
+						title
+						description
+						createdAt
 					}
-				`
-			}),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		}).then(res => {
-			if (res.status !== 200 && res.status !== 201) {
-				throw new Error('Failed!');
-			}
+				}
+			`
+		}, { headers: {
+			'Content-Type': 'application/json'
+		}});
 
-			return res.json();
-		}).then(resData => {
-			if (this.isActive) {
-				this.setState({ tasks: resData.data.tasks, isLoading: false });
-			}
-		}).catch(err => {
-			console.log(err);
-
-			if (this.isActive) {
-				this.setState({ isLoading: false });
-			}
-		});
-	}
-
-	componentWillUnmount() {
-		this.isActive = false;
+		this.setState({ tasks: response.data.data.tasks });
 	}
 
 	toggleModal = () => this.setState({ showModal: !this.state.showModal });
@@ -74,42 +48,33 @@ class TaskListPage extends React.Component {
 		this.toggleModal();
 	}
 
-	delete = (task) => {
-		fetch('http://localhost:4200/', {
-			method: 'POST',
-			body: JSON.stringify({
-				query: `
-					mutation {
-						deleteTask (taskId: "${ task._id }") {
-							title
-						}
+	delete = async (task) => {
+		let requestBody = {
+			query: `
+				mutation {
+					deleteTask (taskId: "${ task._id }") {
+						title
 					}
-				`
-			}),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		}).then(res => {
-			if (res.status !== 200 && res.status !== 201) {
-				throw new Error('Failed!');
-			}
+				}
+			`
+		};
 
-			return res.json();
-		}).then(task => {
-			console.log(task);
-		}).catch(err => {
-			console.log(err);
+		await axios.post('http://localhost:4200/', requestBody,{ headers: {'Content-Type': 'application/json'}})
+		.then(response => {
+			if (response.status === 200) {
+				this.fetchTasks();
+			}
 		});
 	}
 
 	renderModal() {
 		return (
-			<Modal show={this.state.showModal} onHide={ this.toggleModal }>
+			<Modal show={ this.state.showModal } onHide={ this.toggleModal }>
 				<Modal.Header closeButton>
 					<Modal.Title>Create a new task</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<TaskForm task={ this.state.task } />
+					<TaskForm task={ this.state.task } fetchTasks={ this.fetchTasks() } toggleModal={ this.toggleModal } />
 				</Modal.Body>
 				<Modal.Footer>
 					<Button variant="secondary" onClick={ this.toggleModal }>
