@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import TaskForm from '../../components/task-form.component';
 import { NavLink } from 'react-router-dom';
-import axios from 'axios';
 import api from '../../services/web-api.service';
 
 class TaskListPage extends React.Component {
@@ -46,18 +45,14 @@ class TaskListPage extends React.Component {
 	}
 
 	delete = async (task) => {
-		let requestBody = {
-			query: `
-				mutation {
-					deleteTask (taskId: "${ task._id }") {
-						title
-					}
-				}
-			`
-		};
+		let requestBody = `
+			deleteTask (taskId: "${ task._id }") {
+				title
+			}`
+		;
 
-		await axios.post('http://localhost:4200/', requestBody,{ headers: {'Content-Type': 'application/json'}})
-		.then(response => {
+
+		await api.mutation(requestBody, response => {
 			if (response.status === 200) {
 				this.fetchTasks();
 			}

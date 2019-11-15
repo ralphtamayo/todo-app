@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from 'axios';
+import api from '../../services/web-api.service';
 
 class RegisterPage extends React.Component {
 	constructor(props) {
@@ -19,20 +19,14 @@ class RegisterPage extends React.Component {
 			return;
 		}
 
-		let requestBody = {
-			query: `
-				mutation {
-					createUser(userInput: { email: "${ email }", password: "${ password }" }) {
-						_id
-						email
-					}
-				}
-			`
-		}
+		let requestBody = `
+			createUser(userInput: { email: "${ email }", password: "${ password }" }) {
+				_id
+				email
+			}`
+		;
 
-		await axios.post('http://localhost:4200/', requestBody, { headers: {
-			'Content-Type': 'application/json'
-		}});
+		await api.mutation(requestBody);
 	};
 
 	render() {
