@@ -43,7 +43,7 @@ class TaskShowPage extends React.Component {
       }`;
     await api.mutation(requestBody, response => {
       this.props.history.push('/task');
-    }, this.context);
+    });
   };
 
   toggleCompletion = async task => {
@@ -56,7 +56,7 @@ class TaskShowPage extends React.Component {
       }`;
     await api.mutation(requestBody, response => {
       this.setState({ task: response.data.data.toggleTaskCompletion });
-    }, this.context);
+    });
   };
 
   toggleModal = () => this.setState({ showModal: !this.state.showModal });

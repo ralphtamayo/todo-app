@@ -10,6 +10,7 @@ class TaskForm extends React.Component {
 
     this.state = {
       isNew: true,
+      error: null,
       form: {
         id: null,
         title: '',
@@ -61,14 +62,18 @@ class TaskForm extends React.Component {
     }
 
     await api.mutation(requestBody, response => {
-      this.props.toggleModal();
+      if (response.data.errors != null) {
+        this.setState({ error: response.data.errors[0].message });
+      } else {
+        this.props.toggleModal();
 
-      if (this.props.fetchTasks != null) {
-        this.props.fetchTasks();
-      }
+        if (this.props.fetchTasks != null) {
+          this.props.fetchTasks();
+        }
 
-      if (this.props.getTask != null) {
-        this.props.getTask(this.props.task._id);
+        if (this.props.getTask != null) {
+          this.props.getTask(this.props.task._id);
+        }
       }
     }, this.context);
   };
@@ -77,6 +82,9 @@ class TaskForm extends React.Component {
     return (
       <form onSubmit={this.submitForm}>
         <div className="form-group">
+          {this.state.error != null &&
+            <div className="alert alert-danger" role="alert">{ this.state.error }</div>
+          }
           <label>Title</label>
           <input
             type="text"

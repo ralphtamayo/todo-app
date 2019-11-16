@@ -10,6 +10,10 @@ class LoginPage extends React.Component {
 
     this.email = React.createRef();
     this.password = React.createRef();
+
+    this.state = {
+      error: null,
+    }
   }
 
   login = async e => {
@@ -34,12 +38,17 @@ class LoginPage extends React.Component {
         response.data.data.login.token,
         response.data.data.login.tokenExpiration,
       );
+    }).catch(err => {
+      this.setState({ error: err.response.data.errors[0].message });
     });
   };
 
   render() {
     return (
       <form onSubmit={this.login}>
+        {this.state.error != null &&
+          <div className="alert alert-danger" role="alert">{ this.state.error }</div>
+        }
         <div className="form-group">
           <label>Email</label>
           <input
