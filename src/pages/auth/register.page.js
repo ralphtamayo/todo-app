@@ -7,13 +7,18 @@ class RegisterPage extends React.Component {
 
     this.email = React.createRef();
     this.password = React.createRef();
+
+    this.state = {
+      success: null,
+      error: null,
+    }
   }
 
   register = async e => {
     e.preventDefault();
 
-    const email = this.email.current.value;
-    const password = this.password.current.value;
+    const email = this.email.value;
+    const password = this.password.value;
 
     if (email.trim().length === 0 || password.trim().length === 0) {
       return;
@@ -24,12 +29,26 @@ class RegisterPage extends React.Component {
         _id
         email
       }`;
-    await api.mutation(requestBody);
+    await api.mutation(requestBody, response => {
+      if (response.data.errors != null) {
+        this.setState({ error: response.data.errors[0].message });
+      } else {
+        this.setState({ success: 'User successfully created!' });
+        this.email.value = '';
+        this.password.value = '';
+      }
+    });
   };
 
   render() {
     return (
       <form onSubmit={this.register}>
+        {this.state.success != null &&
+          <div className="alert alert-success" role="alert">{ this.state.success }</div>
+        }
+        {this.state.error != null &&
+          <div className="alert alert-danger" role="alert">{ this.state.error }</div>
+        }
         <div className="form-group">
           <label>Email</label>
           <input
@@ -37,7 +56,7 @@ class RegisterPage extends React.Component {
             className="form-control"
             name="email"
             placeholder="Email"
-            ref={this.email}
+            ref={el => this.email = el}
           />
         </div>
         <div className="form-group">
@@ -47,7 +66,7 @@ class RegisterPage extends React.Component {
             className="form-control"
             name="password"
             placeholder="Password"
-            ref={this.password}
+            ref={el => this.password = el}
           />
         </div>
         <button type="submit" className="btn btn-primary btn-block">Register</button>
