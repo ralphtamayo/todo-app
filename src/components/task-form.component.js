@@ -3,10 +3,10 @@ import AuthContext from '../context/auth.context';
 import api from '../services/web-api.service';
 
 class TaskForm extends React.Component {
+  static contextType = AuthContext;
+
   constructor(props) {
     super(props);
-
-    this.contextType = AuthContext;
 
     this.state = {
       isNew: true,
@@ -70,7 +70,7 @@ class TaskForm extends React.Component {
       if (this.props.getTask != null) {
         this.props.getTask(this.props.task._id);
       }
-    });
+    }, this.context);
   };
 
   render() {

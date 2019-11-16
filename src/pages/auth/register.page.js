@@ -30,16 +30,27 @@ class RegisterPage extends React.Component {
   render() {
     return (
       <form onSubmit={this.register}>
-        <h1>Register</h1>
-        <div>
+        <div className="form-group">
           <label>Email</label>
-          <input type="email" id="email" placeholder="email" ref={this.email} />
+          <input
+            type="email"
+            className="form-control"
+            name="email"
+            placeholder="Email"
+            ref={this.email}
+          />
         </div>
-        <div>
+        <div className="form-group">
           <label>Password</label>
-          <input type="password" id="password" placeholder="password" ref={this.password} />
+          <input
+            type="password"
+            className="form-control"
+            name="password"
+            placeholder="Password"
+            ref={this.password}
+          />
         </div>
-        <input type="submit" />
+        <button type="submit" className="btn btn-primary btn-block">Register</button>
       </form>
     );
   }
