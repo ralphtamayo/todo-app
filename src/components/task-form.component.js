@@ -100,7 +100,7 @@ class TaskForm extends React.Component {
           <textarea
             className="form-control"
             name="description"
-            placeholder="description"
+            placeholder="Description"
             value={this.state.form.description}
             onChange={this.handleInputChange}
           />
