@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button, Modal } from 'react-bootstrap';
-import PropTypes from 'prop-types';
 import api from '../../services/web-api.service';
 import TaskForm from '../../components/task-form.component';
 
@@ -27,11 +26,10 @@ class TaskShowPage extends React.Component {
         description
         isDone
       }`;
-    console.log(taskId);
 
     await api.query(requestBody, response => {
       this.setState({ task: response.data.data.task });
-    });
+    }, );
   };
 
   edit = () => {
@@ -45,7 +43,7 @@ class TaskShowPage extends React.Component {
       }`;
     await api.mutation(requestBody, response => {
       this.props.history.push('/task');
-    });
+    }, this.context);
   };
 
   toggleCompletion = async task => {
@@ -58,7 +56,7 @@ class TaskShowPage extends React.Component {
       }`;
     await api.mutation(requestBody, response => {
       this.setState({ task: response.data.data.toggleTaskCompletion });
-    });
+    }, this.context);
   };
 
   toggleModal = () => this.setState({ showModal: !this.state.showModal });

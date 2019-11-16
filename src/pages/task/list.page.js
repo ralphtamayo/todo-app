@@ -1,10 +1,13 @@
 import React from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import TaskForm from '../../components/task-form.component';
 import api from '../../services/web-api.service';
+import AuthContext from '../../context/auth.context';
 
 class TaskListPage extends React.Component {
+  static contextType = AuthContext;
+
   constructor(props) {
     super(props);
 
@@ -21,17 +24,18 @@ class TaskListPage extends React.Component {
 
   fetchTasks = async () => {
     const requestBody = `
-			tasks {
+			tasks(userId: "${ this.context.userId }") {
 				_id
 				title
 				description
 				isDone
 				finishedAt
 				createdAt
-			}`;
-    const response = await api.query(requestBody);
+      }`;
 
-    this.setState({ tasks: response.data.data.tasks });
+    await api.query(requestBody, (res) => {
+      this.setState({ tasks: res.data.data.tasks });
+    });
   };
 
   toggleModal = () => this.setState({ showModal: !this.state.showModal });
